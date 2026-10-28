@@ -1,0 +1,31 @@
+# Dependencies
+node_modules/
+/.pnp
+.pnp.js
+
+# Testing
+/coverage
+
+# Next.js
+/.next/
+/out/
+
+# Production
+/build
+/public/renders/
+/public/uploads/
+/temp/
+
+# Misc
+.DS_Store
+*.pem
+
+# Local env files
+.env*.local
+.env
+
+# Vitest
+.vitest/
+
+# Superpowers scratch
+.superpowers/
