@@ -2,7 +2,8 @@
 
 import React, { useState } from 'react';
 import { PropertyDetails, PropertySchema } from '@/lib/validation/property';
-import { Sparkles, Plus, X, ArrowRight } from 'lucide-react';
+import { Sparkles, Plus, X, ArrowRight, Mic } from 'lucide-react';
+import { VoiceInputModal } from './VoiceInputModal';
 
 interface PropertyFormProps {
   initialData?: Partial<PropertyDetails>;
@@ -33,6 +34,7 @@ export const PropertyForm: React.FC<PropertyFormProps> = ({
 
   const [featureInput, setFeatureInput] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isVoiceModalOpen, setIsVoiceModalOpen] = useState(false);
 
   const handleFieldChange = (field: keyof PropertyDetails, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -43,6 +45,14 @@ export const PropertyForm: React.FC<PropertyFormProps> = ({
         return copy;
       });
     }
+  };
+
+  const handleVoiceApply = (spokenData: Partial<PropertyDetails>) => {
+    setFormData((prev) => ({
+      ...prev,
+      ...spokenData,
+      features: [...(prev.features || []), ...(spokenData.features || [])],
+    }));
   };
 
   const addFeature = () => {
@@ -82,14 +92,24 @@ export const PropertyForm: React.FC<PropertyFormProps> = ({
           <h2 className="text-lg font-semibold tracking-tight text-white">Listing Specifications</h2>
           <p className="text-xs text-zinc-400">Enter property facts. Factual script generation relies exclusively on these entries.</p>
         </div>
-        <button
-          type="button"
-          onClick={onLoadSample}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-400 bg-blue-950/40 hover:bg-blue-900/50 border border-blue-800/60 rounded-md transition-colors"
-        >
-          <Sparkles className="w-3.5 h-3.5" />
-          Load Beverly Hills Sample
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setIsVoiceModalOpen(true)}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-zinc-300 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 rounded-md transition-colors"
+          >
+            <Mic className="w-3.5 h-3.5 text-blue-400" />
+            Dictate Details (Whisper)
+          </button>
+          <button
+            type="button"
+            onClick={onLoadSample}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-400 bg-blue-950/40 hover:bg-blue-900/50 border border-blue-800/60 rounded-md transition-colors"
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            Load Beverly Hills Sample
+          </button>
+        </div>
       </div>
 
       {Object.keys(errors).length > 0 && (
@@ -289,6 +309,12 @@ export const PropertyForm: React.FC<PropertyFormProps> = ({
           <ArrowRight className="w-4 h-4" />
         </button>
       </div>
+
+      <VoiceInputModal
+        isOpen={isVoiceModalOpen}
+        onClose={() => setIsVoiceModalOpen(false)}
+        onApply={handleVoiceApply}
+      />
     </form>
   );
 };
