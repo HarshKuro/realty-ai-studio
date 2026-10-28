@@ -31,3 +31,4 @@ export const envConfig = {
   renderOutputDir: parsed.data.RENDER_OUTPUT_DIR,
   isProduction: parsed.data.NODE_ENV === 'production',
 };
+
