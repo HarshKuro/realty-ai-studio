@@ -1,6 +1,9 @@
 # Realty Assistant | AI Property Video Marketing Studio
 
-Realty Assistant is an editorial-grade property video marketing studio. Real-estate agents input listing specifications, upload 4–8 photographs, review a deterministic factual marketing script, synthesize natural voice-over narration via a local Kokoro TTS GPU container, render genuine 9:16 vertical MP4 video through FFmpeg, preview playback in-browser, and download the finished asset.
+Realty Assistant is an editorial-grade property video marketing studio. Real-estate agents input listing specifications, upload 4–8 photographs, review a deterministic factual marketing script, optionally synthesize or upload voiceover narration, render genuine 9:16 vertical MP4 video through FFmpeg, preview playback in-browser, and download the finished asset.
+
+**Zero Docker Required & Audio is Completely Optional:**
+The studio runs 100% locally with Node.js and FFmpeg. No Docker containers are needed to render videos or pass automated tests. Narration is fully optional—agents can render silent 9:16 videos with burned-in visual captions (3.5s per plate), upload their own voiceover (.mp3/.wav), or use local Kokoro TTS if available.
 
 ---
 
@@ -8,10 +11,10 @@ Realty Assistant is an editorial-grade property video marketing studio. Real-est
 
 - **Minimalist Aesthetic:** Clean, high-contrast monochrome interface (Obsidian Black, Slate Gray, Crisp White) accented by purposeful Electric Blue (`#2563EB`). Zero cheesy gradients, no bloated icons, disciplined typography.
 - **Factual Script Engine:** Deterministic script generator strictly grounded in provided listing facts. Never hallucinates square footage, amenities, or pricing. Operates 100% locally with zero external LLM API keys required.
-- **Local Kokoro TTS Integration:** Server-side OpenAI-compatible adapter communicating directly with local FastAPI GPU Kokoro container (`http://127.0.0.1:8880/v1`). High-grade voice artists (`af_heart`, `af_bella`, `am_michael`) with speed control and instant audio preview.
-- **Genuine FFmpeg 9:16 MP4 Rendering:** High-performance video compositor generating 1080x1920 @ 30fps vertical MP4s with proportional image framing, bottom safe-zone semi-translucent caption pills, and synchronized AAC audio stream. Verified with FFprobe.
-- **Truthful Progress Tracking:** Honest stage milestones (`PREPARING_ASSETS` -> `GENERATING_NARRATION` -> `RENDERING_VIDEO` -> `VALIDATING_EXPORT` -> `COMPLETED`) without fabricated percentage counters.
-- **Faster Whisper STT (Optional Enhancement):** Voice dictation via local Faster Whisper container (`http://127.0.0.1:8881/v1`), allowing agents to speak listing facts with full review before applying to the form.
+- **Completely Optional Audio Pipeline:** Render clean silent 9:16 vertical videos with on-screen visual captions timed at 3.5s per photographic plate, upload custom voiceover audio files, or optionally synthesize speech using local Kokoro TTS.
+- **Genuine FFmpeg 9:16 MP4 Rendering:** High-performance video compositor generating 1080x1920 @ 30fps vertical MP4s with proportional image framing, bottom safe-zone semi-translucent caption pills, and faststart (+moov) streaming. Verified with FFprobe.
+- **Truthful Progress Tracking:** Honest stage milestones (`PREPARING_ASSETS` -> `RENDERING_VIDEO` -> `VALIDATING_EXPORT` -> `COMPLETED`) without fabricated percentage counters.
+- **Zero-Docker Standalone Execution:** No background Docker containers required. All unit tests and build tasks pass 100% offline.
 - **1-Click Demo Preloader:** Bundled sample property facts ("The Glass Pavilion & Sanctuary, Beverly Hills") and 5 high-resolution architectural plates for rapid demonstration.
 
 ---
@@ -21,9 +24,7 @@ Realty Assistant is an editorial-grade property video marketing studio. Real-est
 ### Prerequisites
 1. **Node.js** >= 18 (Tested on Node v24.13.0)
 2. **FFmpeg & FFprobe** installed and accessible in system PATH (Tested on FFmpeg 8.1.1)
-3. **Local Docker Containers** (Optional for offline tests; active on host):
-   - Kokoro TTS: `127.0.0.1:8880/v1`
-   - Faster Whisper STT: `127.0.0.1:8881/v1`
+*(Note: Docker is NOT required)*
 
 ### Installation & Run
 
@@ -34,7 +35,7 @@ cd realty-assistant
 # Install dependencies
 npm install
 
-# Run automated tests
+# Run automated tests (100% offline, zero Docker required)
 npm run test
 
 # Build production bundle

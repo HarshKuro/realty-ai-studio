@@ -29,3 +29,8 @@ node_modules/
 
 # Superpowers scratch
 .superpowers/
+
+
+# Duplicate workspace
+reality-assistant/
+
