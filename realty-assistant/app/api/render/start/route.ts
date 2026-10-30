@@ -14,19 +14,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Scenes array is required' }, { status: 400 });
     }
 
-    if (!audioFilePath) {
-      return NextResponse.json({ error: 'Audio narration path is required' }, { status: 400 });
-    }
-
     const jobId = crypto.randomUUID();
     jobTracker.set(jobId, {
       stage: 'PREPARING_ASSETS',
       message: 'Preparing photographic plates and scene parameters',
     });
 
-    // Calculate per-scene duration matching total audio duration
-    const totalAudioDur = Math.max(3.0, Number(audioDurationSec) || 15.0);
-    const perSceneDur = Math.max(1.5, totalAudioDur / scenes.length);
+    // Audio is optional: if audioDurationSec is provided, match it; otherwise use clean 3.5s per scene default
+    const perSceneDur = audioDurationSec && Number(audioDurationSec) > 0
+      ? Math.max(1.5, Number(audioDurationSec) / scenes.length)
+      : 3.5;
 
     // Map scenes with absolute file paths
     const formattedScenes = scenes.map((s: any) => {
@@ -36,7 +33,7 @@ export async function POST(req: NextRequest) {
       }
       return {
         imagePath: resolvedImagePath,
-        durationSec: perSceneDur,
+        durationSec: Number(s.durationSec) || perSceneDur,
         caption: s.caption || '',
       };
     });
@@ -55,7 +52,7 @@ export async function POST(req: NextRequest) {
           height: 1920,
           fps: 30,
           scenes: formattedScenes,
-          audioFilePath,
+          audioFilePath: audioFilePath || undefined,
           aspectRatio: '9:16',
         });
 
@@ -88,3 +85,4 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: error.message || 'Failed to start render' }, { status: 500 });
   }
 }
+
