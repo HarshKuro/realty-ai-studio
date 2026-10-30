@@ -17,7 +17,7 @@ const STEPS = [
   { id: 1, label: 'Property Facts', icon: Building2 },
   { id: 2, label: 'Photos (4–8)', icon: ImageIcon },
   { id: 3, label: 'Story & Captions', icon: BookOpen },
-  { id: 4, label: 'Voice Studio', icon: Volume2 },
+  { id: 4, label: 'Voice Studio (Optional)', icon: Volume2 },
   { id: 5, label: 'Render & Export', icon: Film },
 ];
 
@@ -102,12 +102,26 @@ export default function StudioPage() {
     setCurrentStep(4);
   };
 
+  // Step 3: Direct Skip to Silent Render (Audio completely optional)
+  const handleSkipToRender = () => {
+    setAudioInfo(null);
+    markStepComplete(3);
+    markStepComplete(4);
+    setCurrentStep(5);
+  };
+
   // Step 4: Voice Studio Audio Ready
   const handleAudioReady = (audio: { url: string; filePath: string; durationSec: number }) => {
     setAudioInfo(audio);
   };
 
   const handleVoiceContinue = () => {
+    markStepComplete(4);
+    setCurrentStep(5);
+  };
+
+  const handleSkipAudio = () => {
+    setAudioInfo(null);
     markStepComplete(4);
     setCurrentStep(5);
   };
@@ -144,19 +158,19 @@ export default function StudioPage() {
             </div>
           </div>
 
-          {/* Local Service Status Indicators */}
+          {/* Engine Status Indicators */}
           <div className="hidden sm:flex items-center gap-4 text-xs font-mono text-zinc-400">
             <div className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-              <span>Kokoro:8880</span>
+              <span className="w-2 h-2 rounded-full bg-blue-400" />
+              <span>FFmpeg 9:16 Active</span>
             </div>
             <div className="flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-emerald-400" />
-              <span>Whisper:8881</span>
+              <span>No Docker Required</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-blue-400" />
-              <span>FFmpeg 8.1</span>
+              <span className="w-2 h-2 rounded-full bg-zinc-400" />
+              <span>Audio Optional</span>
             </div>
           </div>
         </div>
@@ -249,15 +263,17 @@ export default function StudioPage() {
               onSceneChange={handleSceneChange}
               onRegenerate={handleRegenerateScript}
               onContinue={handleScriptApprove}
+              onSkipToRender={handleSkipToRender}
             />
           )}
 
-          {/* Step 4: Kokoro Voice Studio */}
+          {/* Step 4: Kokoro Voice Studio (Optional) */}
           {currentStep === 4 && script && (
             <VoiceStudio
               script={script.fullNarration}
               onAudioReady={handleAudioReady}
               onContinue={handleVoiceContinue}
+              onSkipAudio={handleSkipAudio}
             />
           )}
 
@@ -265,18 +281,17 @@ export default function StudioPage() {
           {currentStep === 5 && (
             <div>
               {!videoInfo ? (
-                audioInfo && (
-                  <RenderTimeline
-                    scenes={scenes}
-                    audioInfo={audioInfo}
-                    onRenderComplete={handleRenderComplete}
-                    onBack={() => setCurrentStep(4)}
-                  />
-                )
+                <RenderTimeline
+                  scenes={scenes}
+                  audioInfo={audioInfo}
+                  onRenderComplete={handleRenderComplete}
+                  onBack={() => setCurrentStep(4)}
+                />
               ) : (
                 <ExportStudio
                   video={videoInfo}
                   propertyTitle={property?.title || 'Luxury Residence'}
+                  hasNarration={!!audioInfo}
                   onEdit={() => {
                     setVideoInfo(null);
                     setCurrentStep(3);
@@ -295,3 +310,4 @@ export default function StudioPage() {
     </div>
   );
 }
+
