@@ -32,6 +32,13 @@ export const PropertyForm: React.FC<PropertyFormProps> = ({
     }
   );
 
+  React.useEffect(() => {
+    if (initialData) {
+      setFormData(initialData);
+      setErrors({});
+    }
+  }, [initialData]);
+
   const [featureInput, setFeatureInput] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isVoiceModalOpen, setIsVoiceModalOpen] = useState(false);

@@ -156,21 +156,32 @@ export default function StudioPage() {
                 AI Property Video Marketing Studio
               </div>
             </div>
+
+            <div className="hidden lg:flex items-center gap-2 pl-4 border-l border-zinc-800 text-xs">
+              <span className="text-zinc-500 font-normal">Created by</span>
+              <span className="text-white font-semibold">Harsh Partap Jain</span>
+              <a
+                href="mailto:harshpartapjainsdg@gmail.com"
+                className="text-zinc-400 hover:text-blue-400 font-mono text-[11px] transition-colors"
+              >
+                (harshpartapjainsdg@gmail.com)
+              </a>
+            </div>
           </div>
 
           {/* Engine Status Indicators */}
           <div className="hidden sm:flex items-center gap-4 text-xs font-mono text-zinc-400">
             <div className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-blue-400" />
-              <span>FFmpeg 9:16 Active</span>
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span>Kokoro:8880</span>
             </div>
             <div className="flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-emerald-400" />
-              <span>No Docker Required</span>
+              <span>Whisper:8881</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-zinc-400" />
-              <span>Audio Optional</span>
+              <span className="w-2 h-2 rounded-full bg-blue-400" />
+              <span>FFmpeg 9:16</span>
             </div>
           </div>
         </div>
@@ -303,9 +314,17 @@ export default function StudioPage() {
         </div>
       </main>
 
-      {/* Minimal Footer */}
-      <footer className="border-t border-zinc-900 py-6 text-center text-xs text-zinc-500">
-        Realty Assistant Studio • Clean Monochrome & Electric Blue Interface • Kokoro FastAPI TTS • FFmpeg 9:16 Video Engine
+      {/* Minimal Footer with Author Attribution */}
+      <footer className="border-t border-zinc-900 py-6 text-center text-xs text-zinc-400 space-y-1">
+        <div>
+          Realty Assistant Studio • Created by <span className="text-white font-semibold">Harsh Partap Jain</span> (
+          <a href="mailto:harshpartapjainsdg@gmail.com" className="text-blue-400 hover:underline font-mono">
+            harshpartapjainsdg@gmail.com
+          </a>)
+        </div>
+        <div className="text-[11px] text-zinc-500">
+          Clean Monochrome & Electric Blue Interface • Kokoro FastAPI TTS • Faster Whisper STT • FFmpeg 9:16 Compositing Engine
+        </div>
       </footer>
     </div>
   );
