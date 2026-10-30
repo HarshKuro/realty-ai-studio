@@ -12,9 +12,10 @@ export const RenderSpecSchema = z.object({
   height: z.number().default(1920),
   fps: z.number().default(30),
   scenes: z.array(RenderSceneSpecSchema).min(1),
-  audioFilePath: z.string().min(1),
+  audioFilePath: z.string().optional(),
   aspectRatio: z.enum(['9:16', '16:9']).default('9:16'),
 });
 
 export type RenderSceneSpec = z.infer<typeof RenderSceneSpecSchema>;
 export type RenderSpec = z.infer<typeof RenderSpecSchema>;
+
