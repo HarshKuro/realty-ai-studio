@@ -35,6 +35,21 @@ export class KokoroAdapter {
     this.baseUrl = baseUrl.replace(/\/$/, '');
   }
 
+  async checkHealth(): Promise<boolean> {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 1200);
+      const res = await fetch(`${this.baseUrl}/audio/voices`, {
+        method: 'GET',
+        signal: controller.signal,
+      });
+      clearTimeout(timeoutId);
+      return res.ok;
+    } catch {
+      return false;
+    }
+  }
+
   async listVoices(): Promise<KokoroVoice[]> {
     try {
       const res = await fetch(`${this.baseUrl}/audio/voices`, {
@@ -134,3 +149,4 @@ export class KokoroAdapter {
     }
   }
 }
+
