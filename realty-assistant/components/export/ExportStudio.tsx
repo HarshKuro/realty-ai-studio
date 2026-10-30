@@ -7,12 +7,14 @@ import { Download, Share2, Edit, Check, Film, CheckCircle2 } from 'lucide-react'
 interface ExportStudioProps {
   video: { url: string; path: string; durationSec: number };
   propertyTitle: string;
+  hasNarration?: boolean;
   onEdit: () => void;
 }
 
 export const ExportStudio: React.FC<ExportStudioProps> = ({
   video,
   propertyTitle,
+  hasNarration = false,
   onEdit,
 }) => {
   const [copied, setCopied] = useState(false);
@@ -41,7 +43,7 @@ export const ExportStudio: React.FC<ExportStudioProps> = ({
         <div>
           <h2 className="text-lg font-semibold tracking-tight text-white">Verified Video Export</h2>
           <p className="text-xs text-zinc-400">
-            Real H.264 MP4 output generated via local FFmpeg. Verified with audio stream and burnt-in captions.
+            Real H.264 MP4 output generated via local FFmpeg. Verified 1080x1920 9:16 vertical orientation with burnt-in captions.
           </p>
         </div>
         <div className="flex items-center gap-1.5 px-3 py-1 bg-emerald-950/60 border border-emerald-900/60 rounded text-emerald-400 text-xs font-medium">
@@ -85,9 +87,9 @@ export const ExportStudio: React.FC<ExportStudioProps> = ({
               </div>
 
               <div className="p-3 bg-zinc-950 border border-zinc-800/80 rounded">
-                <div className="text-[10px] text-zinc-400">AUDIO DURATION</div>
+                <div className="text-[10px] text-zinc-400">AUDIO / PACING</div>
                 <div className="text-xs font-mono font-semibold text-white mt-0.5">
-                  {video.durationSec.toFixed(1)}s
+                  {video.durationSec.toFixed(1)}s {hasNarration ? '(Narrated)' : '(Silent)'}
                 </div>
               </div>
 
@@ -101,7 +103,7 @@ export const ExportStudio: React.FC<ExportStudioProps> = ({
               <div className="p-3 bg-zinc-950 border border-zinc-800/80 rounded">
                 <div className="text-[10px] text-zinc-400">VOICE SYNTHESIS</div>
                 <div className="text-xs font-mono font-semibold text-white mt-0.5">
-                  Kokoro TTS Local
+                  {hasNarration ? 'Audio Narration' : 'None (Visual Captions)'}
                 </div>
               </div>
 
@@ -148,3 +150,4 @@ export const ExportStudio: React.FC<ExportStudioProps> = ({
     </div>
   );
 };
+

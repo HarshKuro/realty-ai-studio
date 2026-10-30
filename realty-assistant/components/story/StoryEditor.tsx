@@ -12,6 +12,7 @@ interface StoryEditorProps {
   onSceneChange: (sceneIndex: number, caption: string, narration: string) => void;
   onRegenerate: () => void;
   onContinue: () => void;
+  onSkipToRender?: () => void;
 }
 
 export const StoryEditor: React.FC<StoryEditorProps> = ({
@@ -22,6 +23,7 @@ export const StoryEditor: React.FC<StoryEditorProps> = ({
   onSceneChange,
   onRegenerate,
   onContinue,
+  onSkipToRender,
 }) => {
   const wordCount = fullNarration.trim().split(/\s+/).filter(Boolean).length;
 
@@ -155,16 +157,32 @@ export const StoryEditor: React.FC<StoryEditorProps> = ({
         </div>
       </div>
 
-      <div className="pt-4 flex justify-end">
-        <button
-          type="button"
-          onClick={onContinue}
-          className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-500 rounded-md transition-colors shadow-sm focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-zinc-950"
-        >
-          Approve Story & Proceed to Voice Studio
-          <ArrowRight className="w-4 h-4" />
-        </button>
+      <div className="pt-4 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-zinc-800/80">
+        <div className="text-xs text-zinc-400">
+          Audio is completely optional: render a silent video with on-screen captions or proceed to Voice Studio.
+        </div>
+        <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
+          {onSkipToRender && (
+            <button
+              type="button"
+              onClick={onSkipToRender}
+              className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 text-xs font-semibold text-zinc-200 bg-zinc-900 hover:bg-zinc-800 border border-zinc-750 hover:border-zinc-700 rounded-md transition-colors"
+            >
+              Skip Audio & Render Video Directly (3.5s / slide)
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={onContinue}
+            className="inline-flex items-center justify-center gap-2 px-5 py-2.5 text-xs sm:text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 rounded-md transition-colors shadow-sm focus:ring-2 focus:ring-blue-500"
+          >
+            Continue to Voice Studio (Optional)
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
       </div>
     </div>
   );
 };
+

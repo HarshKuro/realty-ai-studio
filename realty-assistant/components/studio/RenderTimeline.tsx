@@ -6,7 +6,7 @@ import { Loader2, CheckCircle2, Film, AlertCircle, RefreshCw } from 'lucide-reac
 
 interface RenderTimelineProps {
   scenes: PlannedScene[];
-  audioInfo: { url: string; filePath: string; durationSec: number };
+  audioInfo?: { url: string; filePath: string; durationSec: number } | null;
   onRenderComplete: (video: { url: string; path: string; durationSec: number }) => void;
   onBack: () => void;
 }
@@ -37,6 +37,7 @@ export const RenderTimeline: React.FC<RenderTimelineProps> = ({
     setStatusMessage('Initiating FFmpeg render pipeline...');
 
     try {
+      const hasAudio = !!audioInfo?.filePath;
       const res = await fetch('/api/render/start', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -45,9 +46,10 @@ export const RenderTimeline: React.FC<RenderTimelineProps> = ({
             imageUrl: s.image.url,
             imagePath: s.image.filePath,
             caption: s.caption,
+            durationSec: 3.5,
           })),
-          audioFilePath: audioInfo.filePath,
-          audioDurationSec: audioInfo.durationSec,
+          audioFilePath: hasAudio ? audioInfo.filePath : undefined,
+          audioDurationSec: hasAudio ? audioInfo.durationSec : scenes.length * 3.5,
         }),
       });
 
@@ -110,7 +112,9 @@ export const RenderTimeline: React.FC<RenderTimelineProps> = ({
         <div>
           <h2 className="text-lg font-semibold tracking-tight text-white">Video Rendering Engine</h2>
           <p className="text-xs text-zinc-400">
-            Compositing 9:16 vertical resolution (1080x1920 @ 30fps), H.264 video, AAC master audio, and burned-in subtitles.
+            {audioInfo
+              ? 'Compositing 9:16 vertical resolution (1080x1920 @ 30fps), H.264 video, master audio, and burned-in captions.'
+              : 'Compositing 9:16 vertical resolution (1080x1920 @ 30fps), H.264 video, and burned-in visual captions (Silent mode, 3.5s/scene).'}
           </p>
         </div>
       </div>
@@ -204,3 +208,4 @@ export const RenderTimeline: React.FC<RenderTimelineProps> = ({
     </div>
   );
 };
+
