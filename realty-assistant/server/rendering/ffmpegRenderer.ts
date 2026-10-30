@@ -87,9 +87,14 @@ export async function executeFfmpegRender(specInput: RenderSpec): Promise<Render
       .join('\n');
     await fs.writeFile(concatListPath, concatFileContent, 'utf-8');
 
-    // Mux concatenated video with Kokoro narration audio
+    const totalScenesDuration = spec.scenes.reduce(
+      (acc, s) => acc + Math.max(1.0, s.durationSec),
+      0
+    );
+
+    // Mux concatenated video with Kokoro narration audio or silent audio stream if audio is omitted
     // -movflags +faststart places moov atom at beginning of MP4 for instant browser playback
-    const muxArgs = [
+    const muxArgs: string[] = [
       '-y',
       '-f',
       'concat',
@@ -97,25 +102,56 @@ export async function executeFfmpegRender(specInput: RenderSpec): Promise<Render
       '0',
       '-i',
       concatListPath,
-      '-i',
-      spec.audioFilePath,
-      '-c:v',
-      'libx264',
-      '-preset',
-      'fast',
-      '-crf',
-      '22',
-      '-pix_fmt',
-      'yuv420p',
-      '-c:a',
-      'aac',
-      '-b:a',
-      '192k',
-      '-shortest',
-      '-movflags',
-      '+faststart',
-      finalOutputPath,
     ];
+
+    if (spec.audioFilePath) {
+      muxArgs.push(
+        '-i',
+        spec.audioFilePath,
+        '-c:v',
+        'libx264',
+        '-preset',
+        'fast',
+        '-crf',
+        '22',
+        '-pix_fmt',
+        'yuv420p',
+        '-c:a',
+        'aac',
+        '-b:a',
+        '192k',
+        '-shortest',
+        '-movflags',
+        '+faststart',
+        finalOutputPath
+      );
+    } else {
+      // Audio is completely optional: inject lightweight silent AAC track for 100% universal player compatibility
+      muxArgs.push(
+        '-f',
+        'lavfi',
+        '-t',
+        totalScenesDuration.toString(),
+        '-i',
+        'anullsrc=channel_layout=stereo:sample_rate=44100',
+        '-c:v',
+        'libx264',
+        '-preset',
+        'fast',
+        '-crf',
+        '22',
+        '-pix_fmt',
+        'yuv420p',
+        '-c:a',
+        'aac',
+        '-b:a',
+        '128k',
+        '-shortest',
+        '-movflags',
+        '+faststart',
+        finalOutputPath
+      );
+    }
 
     await execFileAsync('ffmpeg', muxArgs);
 
@@ -143,3 +179,4 @@ export async function executeFfmpegRender(specInput: RenderSpec): Promise<Render
     await fs.rm(tempDir, { recursive: true, force: true }).catch(() => {});
   }
 }
+
